@@ -1,4 +1,7 @@
+import calc from "./ui.js"
 
+const body = document.querySelector("body")
+body.appendChild(calc)
 
 
 const keys = document.querySelector(".keyboard")
@@ -7,12 +10,15 @@ const prevExprArea = document.querySelector(".prev-area")
 
 const operators = "+-*/"
 
+
+
 const State = {
   currExpr: [],
   currToken: "",
   evalJustFinished: false,
   lastResult: 0
 }
+
 
 function write(value, elem) {
   elem.value += value.toString()
@@ -38,7 +44,7 @@ function exprToString(expr) {
 // ["123" "+" "13123" ]
 function safeEval(expr) {
   let flat = ""
-  for (token of expr) {
+  for (var token of expr) {
     flat += token
   }
   let result = eval(flat)
@@ -46,12 +52,13 @@ function safeEval(expr) {
     //TODO: handle error in eval
     return -1
   }
-  console.log(result)
   return result
 }
 
-function clear(elem) {
-  elem.value = ""
+function clear(...elems) {
+  for (var elem of elems) {
+    elem.value = ""
+  }
 }
 
 
@@ -60,8 +67,7 @@ keys.onclick = (event) => {
   const value = event.target.value
   if (keyEl.classList.contains("numkey")) {
     if (State.evalJustFinished) {
-      clear(echoArea)
-      clear(prevExprArea)
+      clear(echoArea, prevExprArea)
       write(State.lastResult, prevExprArea)
       State.evalJustFinished = false
     }
@@ -72,8 +78,7 @@ keys.onclick = (event) => {
   }
   if (keyEl.classList.contains("funckey")) {
     if (State.evalJustFinished) {
-      clear(echoArea)
-      clear(prevExprArea)
+      clear(echoArea, prevExprArea)
       write(State.lastResult, prevExprArea)
       State.currExpr.push(State.lastResult.toString())
       State.evalJustFinished = false
